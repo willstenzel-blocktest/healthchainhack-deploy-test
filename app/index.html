@@ -1,0 +1,589 @@
+<!-- For HealthChainHack, Sep 2018
+Author: Xinghua Liang
+Copyright: BlockTEST LLC -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Loyalty Token Management - Truffle Webpack Demo w/ Frontend</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <!-- bootstrap stylesheet -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="./app.js"></script>
+</head>
+
+<body>
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 class="my-0 mr-md-auto font-weight-normal">HealthChain Hack | Base Solution</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+      <a class="p-2 text-dark" target="_blank" href="../Base_Solution_Manual.pptx">Overview</a>
+      <a class="p-2 text-dark" target="_blank" href="../Base_Solution_Setup.docx">Setup</a>
+    </nav>
+  </div>
+
+
+  <div style="margin-top:5%">
+    <div id="legitimationPanel" class="container text-center">
+      <div class="card-deck text-center">
+        <div class="card mb-12 box-shadow">
+          <div class="card-header" style="background-color:#3b5998;color: white">
+            <h2 class="my-0 font-weight-normal justify">Legitimation</h2>
+          </div>
+          <div class="card-body">
+
+            <div class="text-center">
+              <p id="legiStatus" class="lead">
+              </p>
+            </div>
+            <!-- <h2><span id="legiStatus" style="background-color:#FFFF99;font-size:80%"></span></h2> -->
+
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="legiFile" style="font-size:19px">Law Agreement</label>
+                  <input type="file" id="legiFile" accept="*.*" onChange="App.openLegalFile(event)"
+                    class="form-control-file"></input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="hashCode">SHA-256 Hash</label>
+                  <input type="text" id="hashCode" readonly="true" class="form-control">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="hashSign">Hash Signature</label>
+                  <input type="text" id="hashSign" readonly="true" class="form-control">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="fileURL">File URL</label>
+                  <input type="text" class="form-control" id="fileURL"
+                    placeholder="Save agreement to cloud, and input share link here">
+                </div>
+              </div><br>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: center;">
+                  <button id="sign" onclick="App.signAgreement()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Sign Agreement</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <hr><br>
+    <div id="loyaltyTokenPanel" class="container text-center">
+      <div class="card-deck text-center">
+        <div class="card mb-12 box-shadow">
+          <div class="card-header" style="background-color:#3b5998;color: white">
+            <h2 class="my-0 font-weight-normal justify">Loyalty Token Management</h2>
+          </div>
+          <div id="tokenInitialization" class="card-body">
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>Initialization</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="initSupply" style="font-size:19px">Total Supply</label>
+                  <input type="text" id="initSupply" placeholder="e.g., 1000000" class="form-control"></input>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label style="font-size:19px" for="initBonus">Bonus Tokens</label>
+                  <input type="text" id="initName" placeholder="e.g., Loyalty Token" class="form-control"></input>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label style="font-size:19px" for="initSymbol">Token Symbol</label>
+                  <input type="text" id="initSymbol" placeholder="e.g., LT" class="form-control"></input>
+                </div>
+              </div><br>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: center;">
+                  <button id="initToken" onclick="App.initLoyaltyToken()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Initialize Loyalty Token</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="card-body">
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>General Information</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead">Total Supply: <span id="totalSupply"></span></p>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead">Bonus Tokens: <span id="bonusToken"></span></p>
+                </div>
+              </div>
+            </form>
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>Account Information</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead">Account: <span id="accountAddress"></span></p>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead">Balance: <span id="accountBalance"></span></p>
+                </div>
+              </div>
+            </form>
+
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>Send Loyalty Tokens</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="amount" style="font-size:19px">Amount</label>
+                  <input type="text" id="amount" placeholder="e.g., 100" class="form-control"></input>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="receiver" style="font-size:19px">To Address</label>
+                  <input type="text" id="receiver" placeholder="e.g., 0xdf8114c4f533f72ea1bafafb7ca1836c54dbd3cc"
+                    class="form-control"></input>
+                </div>
+              </div><br>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: center;">
+                  <button id="sendToken" onclick="App.sendLoyaltyToken()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Send Loyalty Token</button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div><br>
+    <hr><br>
+
+    <!-- task management -->
+    <div id="taskManagementPanel" class="container text-center">
+      <div class="card-deck text-center">
+        <div class="card mb-12 box-shadow">
+          <div class="card-header" style="background-color:#3b5998;color: white">
+            <h2 class="my-0 font-weight-normal justify">Task Management</h2>
+          </div>
+          <div id="taskInitialization" class="card-body">
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>Initialization</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="initSupply">Tool Name:</label>
+                  <input type="text" id="initToolName" placeholder="e.g., ADMET" class="form-control"></input>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="initPlayerSalary">Player Salary:</label>
+                  <input type="text" id="initPlayerSalary" placeholder="Unit: ETH, e.g., 1"
+                    class="form-control"></input>
+                </div>
+              </div><br>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: center;">
+                  <button id="initTask" onclick="App.initTaskManage()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Initialize Task</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-body">
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>General Information</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead">Task Address: <span id="taskAddress"></span></p>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead"> Task Balance: <span id="taskBalance"></span> ETH</p>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead">Task Name: <span id="taskName"></span></p>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead"> Tool Name: <span id="toolName"></span></p>
+                </div>
+              </div>
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <p class="lead">Player Salary: <span id="playerSalary"></span> ETH</p>
+                </div>
+              </div>
+            </form>
+
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>List of Tool Players</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <ul id="playerList" class="lead"></ul>
+                </div>
+              </div>
+            </form>
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>List of Data Requests</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <ul id="dataReqPool" class="lead"></ul>
+                </div>
+              </div>
+            </form>
+            <br><br>
+            <hr width="75%">
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="row" class="form-group">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="dataAccessCode" style="font-size:19px">Data Access Code</label>
+                  <input type="text" id="dataAccessCode" placeholder="If you don't have one, click generate"
+                    class="form-control"></input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: center;">
+                  <button id="generateDataCode" onclick="App.generateDataCode()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Generate Code</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="comPublicKey">Public Key</label>
+                  <input type="text" id="comPublicKey" readonly="true" class="form-control">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3" style="text-align: left;">
+                  <label for="playerId">Player ID</label>
+                  <input type="text" id="playerId" placeholder="Player ID to be approved" class="form-control">
+                </div>
+              </div>
+            </form>
+            <hr width="75%">
+          </div>
+
+          <!-- Tool Player Panel -->
+          <div id="toolPlayerPanel" class="card-body">
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>For Tool Player</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="text-center">
+                <br>
+                <p class="lead">Step 1: generate data access code,
+                  and submit request to accept the task.
+                  Then wait for task owner to approve the request
+                </p>
+                <hr style="width:40%">
+                <br>
+                <button id="submitPlayerRequest" onclick="App.submitPlayerRequest()" type="button" class="btn"
+                  style="background-color:#3b5998;color: white">New Player Request</button>
+                <br><br><br>
+                <p class="lead">Step 2: enter data access code and player id,
+                  locate inpute data, decrypte input data,
+                  do AI computation with the input data
+                </p>
+                <hr style="width:40%">
+                <br>
+                <div id="playerDecryptPanel">
+
+                  <button id="getDataInfo" onclick="App.getDataInfo()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Locate Input Data</button>
+                  <br><br>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="playerDataDecryptURL" style="font-size:19px">Data Cloud URL</label>
+                      <input type="text" id="playerDataDecryptURL" readonly="true"
+                        placeholder="will show after encrypting data" class="form-control"></input>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="playerDataDecryptHash" style="font-size:19px">Encrypted Data Hash</label>
+                      <input type="text" id="playerDataDecryptHash" readonly="true"
+                        placeholder="will show after encrypting data" class="form-control"></input>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="openDecryptedFile" style="font-size:19px">Data File</label>
+                      <input type="file" id="openDecryptedFile" accept="*.*" onChange="App.openDataFile(event)"
+                        class="form-control-file"></input>
+                    </div>
+                  </div><br>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: center;">
+                      <button id="decryptDataFile" onclick="App.decryptDataFile()" type="button" class="btn"
+                        style="background-color:#3b5998;color: white">Decrypt Data</button>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <hr style="width:40%">
+                <p class="lead">Step 3: enter player id, locate result request, encrypt result data,
+                  and submit to blockchain with result value.
+                  Then wait for task owner to validate the result
+                </p>
+                <hr style="width:40%">
+                <br>
+
+                <div id="playerEncryptPanel">
+                  <button id="getPlayerEncryptCode" onclick="App.getEncryptCode()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Locate Result Request</button>
+                  <br><br>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="playerEncryptCode" style="font-size:19px">Data Encrypt Code</label>
+                      <input type="text" id="playerEncryptCode" readonly="true" placeholder="Obtained from blockchain"
+                        class="form-control"></input>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="openDataFile" style="font-size:19px">Data File</label>
+                      <input type="file" id="openDataFile" accept="*.*" onChange="App.openDataFile(event)"
+                        class="form-control-file"></input>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="playerDataEncryptHash" style="font-size:19px">Encrypted Data Hash</label>
+                      <input type="text" id="playerDataEncryptHash" readonly="true"
+                        placeholder="will show after encrypting data" class="form-control"></input>
+                    </div>
+                  </div>
+                  <br>
+                  <button id="encryptDataFile" onclick="App.encryptDataFile()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Encrypt Data</button>
+                  <br>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="playerDataEncryptURL" style="font-size:19px">Data Cloud URL</label>
+                      <input type="text" id="playerDataEncryptURL"
+                        placeholder="Save encrypted file to cloud, and input share link here"
+                        class="form-control"></input>
+                    </div>
+                  </div>
+                </div>
+
+                <br>
+                <div class="row">
+                  <div class="col-md-12 mb-3" style="text-align: left;">
+                    <label for="playerResult" style="font-size:19px">Result Value</label>
+                    <input type="text" id="playerResult" placeholder="Final result" class="form-control"></input>
+                  </div>
+                </div>
+                <br>
+                <button id="submitPlayerResult" onclick="App.submitPlayerResult()" type="button" class="btn"
+                  style="background-color:#3b5998;color: white">Submit Player Result</button>
+
+              </div>
+            </form>
+          </div>
+
+
+          <!-- Task Owner -->
+
+          <div id="taskOwnerPanel" class="card-body">
+            <div class="text-center">
+              <hr class="mb-4">
+              <h3>For Task Owner</h3>
+              <hr class="mb-4">
+            </div>
+            <form style="margin-left:20%;margin-right:20%">
+              <div class="text-center">
+                <br>
+                <p class="lead">Step 1: generate data access code, enter player id,
+                  encrypt input data, upload encrypted data to cloud,
+                  then approve player request
+                </p>
+                <hr style="width:40%">
+                <div id="ownerEncryptPanel">
+                  <br>
+                  <button id="getOwnerEncryptCode" onclick="App.getEncryptCode()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Locate Data Request</button>
+                  <br>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="ownerEncryptCode" style="font-size:19px">Data Encrypt Code</label>
+                      <input type="text" id="ownerEncryptCode" readonly="true" placeholder="Obtained from blockchain"
+                        class="form-control"></input>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="openDataFile" style="font-size:19px">Data File</label>
+                      <input type="file" id="openDataFile" accept="*.*" onChange="App.openDataFile(event)"
+                        class="form-control-file"></input>
+                    </div>
+                  </div><br>
+                  <button id="encryptDataFile" onclick="App.encryptDataFile()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Encrypt Data</button>
+                  <br>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="ownerDataEncryptHash" style="font-size:19px">Encrypted Data Hash</label>
+                      <input type="text" id="ownerDataEncryptHash" readonly="true"
+                        placeholder="will show after encrypting data" class="form-control"></input>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="ownerDataEncryptURL" style="font-size:19px">Data Cloud URL</label>
+                      <input type="text" id="ownerDataEncryptURL"
+                        placeholder="Save encrypted file to cloud, and input share link here"
+                        class="form-control"></input>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <button id="approvePlayerRequest" onclick="App.approvePlayerRequest()" type="button" class="btn"
+                  style="background-color:#3b5998;color: white">Approve Player Request</button>
+                <br>
+                <br><br>
+                <hr style="width:40%">
+                <p class="lead">Step 2: enter data access code and player id,
+                  locate result data, decrypt result data,
+                  validate result with the value,
+                  then approve/reject player result
+                </p>
+                <hr style="width:40%">
+                <br>
+                <div id="ownerDecryptPanel">
+                  <br>
+                  <button id="getOwnerEncryptCode" onclick="App.getEncryptCode()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Locate Data Request</button>
+                  <br><br>
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="ownerDataDecryptURL" style="font-size:19px">Data Cloud URL</label>
+                      <input type="text" id="ownerDataDecryptURL" readonly="true"
+                        placeholder="will show after encrypting data" class="form-control"></input>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="ownerDataDecryptHash" style="font-size:19px">Encrypted Data Hash</label>
+                      <input type="text" id="ownerDataDecryptHash" readonly="true"
+                        placeholder="will show after encrypting data" class="form-control"></input>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="openEncryptedFile" style="font-size:19px">Data File</label>
+                      <input type="file" id="openEncryptedFile" accept="*.*" onChange="App.openDataFile(event)"
+                        class="form-control-file"></input>
+                    </div>
+                  </div>
+                  <br>
+                  <button id="decryptDataFile" onclick="App.decryptDataFile()" type="button" class="btn"
+                    style="background-color:#3b5998;color: white">Decrypt Data</button>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 mb-3" style="text-align: left;">
+                      <label for="ownerResult" style="font-size:19px">Result Value</label>
+                      <input type="text" id="ownerResult" readonly="true" placeholder="will show after encrypting data"
+                      class="form-control"></input>
+                  </div>
+                </div>
+                <br><br>
+                <div class="row">
+                    <div class="col-md-6 mb-3" style="text-align: right;">
+                        <button id="approvePlayerResult" onclick="App.approvePlayerResult()" type="button" class="btn btn-outline-success"
+                       >Approve Player Result</button>
+                    </div>
+                    <div class="col-md-6 mb-3" style="text-align: left;">
+                        <button id="rejectPlayerResult" onclick="App.rejectPlayerResult()" type="button" class="btn btn-outline-danger"
+                        >Reject Player Result</button>
+                      </div>
+                  </div>
+                <br>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <br>
+    <hr><br>
+    <div  class="text-center" style="margin-bottom:3%">
+      <span class="hint"><strong>Status: </strong></span><span id="status"></span>
+      <br>
+      <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and
+        warnings.</span>
+    </div>
+  </div>
+
+  <!-- bootstrap scripts -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>
